@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://absolucy.moe/</loc>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/archive/</loc>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/dont-use-brave/</loc>
+        <lastmod>2021-01-10</lastmod>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/nfts-explained-and-why-they-suck/</loc>
+        <lastmod>2022-01-22</lastmod>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/portfolio/</loc>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/rust-optimization/</loc>
+        <lastmod>2020-09-29</lastmod>
+    </url>
+    <url>
+        <loc>https://absolucy.moe/tags/</loc>
+    </url>
+</urlset>

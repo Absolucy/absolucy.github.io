@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Optimization - Making Rust Code Go Brrrr</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://absolucy.moe/style.css">
+    <link rel="stylesheet" href="https://absolucy.moe/color/pink.css">
+
+        <link rel="stylesheet" href="https://absolucy.moe/color/background_dark.css">
+    
+    <link rel="stylesheet" href="https://absolucy.moe/font-hack-subset.css">
+
+    <meta name="description" content="">
+
+    <meta property="og:description" content="">
+    <meta property="og:title" content="Optimization - Making Rust Code Go Brrrr">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://absolucy.moe/rust-optimization/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:title" content="Optimization - Making Rust Code Go Brrrr">
+    <meta property="twitter:domain" content="absolucy.moe">
+    <meta property="twitter:url" content="https://absolucy.moe/rust-optimization/">
+
+<meta
+	property="og:title"
+	content="Optimization - Making Rust Code Go Brrrr"
+/>
+<meta property="og:description" content="<p>Rust code can be fast. Very fast, in fact. If you look at the <a href="https://benchmarksgame-team.pages.debian.net/benchmarksgame/fastest/rust.html">Benchmarks Game</a>, it goes head-to-head with C and C++.</p>
+<p>But performance isn't effortless, although Rust's LLVM backend makes it seem so. I'm going to go over the ways I improve performance in my Rust projects." />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site:id" content="1265822802554368000" />
+<meta name="twitter:creator:id" content="1265822802554368000" />
+<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "BlogPosting",
+		"headline": "Optimization - Making Rust Code Go Brrrr",
+		"wordcount": "1286",
+		"url": "https://absolucy.moe/rust-optimization/",
+		
+			"dateCreated": "2020-09-29",
+			"datePublished": "2020-09-29",
+		
+			"description": "Rust code can be fast. Very fast, in fact. If you look at the Benchmarks Game, it goes head-to-head with C and C++.\nBut performance isn't effortless, although Rust's LLVM backend makes it seem so. I'm going to go over the ways I improve performance in my Rust projects.",
+		"articleBody": "Rust code can be fast. Very fast, in fact. If you look at the Benchmarks Game, it goes head-to-head with C and C++.\nBut performance isn't effortless, although Rust's LLVM backend makes it seem so. I'm going to go over the ways I improve performance in my Rust projects.\nRayon isn't a magic bullet\nIt's really not. Many people think just slapping par_iter on the smallest operation will magically fix their performance. It won't. With that mindset, synchronization overhead will eat you alive.\nRayon has more than just par_iter. For example, par-chunks is very useful - you can split your task into parallel chunks, each thread processing a portion of the entire dataset at a time. This greatly reduces synchronization overhead, especially for situations where you have a large amount of small tasks. However, it still may be better to use par_iter for large tasks that take a while per iteration.\niter.par_chunks(4096).for_each(|x| {\n\tfor y in x {\n\t\ty.do_small_thing();\n\t}\n});\n\nBuffering matters!\nThis is simple. I/O involves syscalls. Syscalls are bad for performance. Therefore, you want to minimize syscalls and optimize I/O.\nYou should always wrap I/O (whether it be a File, TcpStream, et cetera) in an BufReader or BufWriter. These quite simply buffer I/O operations, preferring to write things in a single large batch, over many small batches. This reduces your total syscalls, and overall increases performance.\nRemember!!: If you use a BufWriter, make sure to call flush and/or sync_all before it's dropped! This will allow you to handle any errors.\nlet fd = File::create(&quot;example.bin&quot;).expect(&quot;Failed to create file!&quot;);\nlet mut writer = BufWriter::new(fd);\nstd::io::copy(&amp;mut buffer, &amp;mut writer).expect(&quot;Failed to copy buffer!&quot;);\nwriter.flush().expect(&quot;Failed to write file!&quot;);\n\nstd isn't always the best.\nThe Rust standard library is great. I mean, it really is. But it doesn't always offer the best options. Some crates provide near-identical interfaces at greatly increased performance.\n\nparking_lot - Offers better Mutex and RwLock implementations than Rust's standard library. In addition to performing better, they don't poison (so no need for an additional match/unwrap).\ncrossbeam-channel and flume - These provide alternative Sender/Receiver implementations to the ones in std::sync::mpsc. I personally prefer flume, as it's implemented in 100% safe code.\ndashmap is a better solution than throwing Arc&lt;RwLock&lt;HashMap&lt;K, V&gt;&gt;&gt; everywhere - as it's optimized with sharding, allows for concurrent access, highly performant, and easy to use/convert to.\nryu and lexical - These are highly performant interfaces for converting to and from decimal strings. Quite simply, they turn &quot;1.2345&quot; to 1.2345_f32 and do so fast, and vice versa.\n\nJust prefer to avoid text processing when possible, truth be told.\n\n\n\nAllocating the path to hell\nMany Rust developers take types such as String and Vec for granted, without understanding the downsides. These are dynamically allocated types. Allocations are not your friend when you're optimizing for performance.\n\nIn types that will be serialized/deserialized from another format, prefer Cow&lt;str&gt;. This will allow you to borrow the string, and then convert it to an owned string if needed.\nLook into crates such as tinyvec and smolstr. These allow for you to have stack-optimized structures, with minimal effort.\nTypes that require an explicit clone typically allocate! Prefer Copy types where possible.\n\nIn addition, look into alternative allocators which may yield better performance for your project, such as jemallocator or mimalloc.\nAdvanced Magic Extensions\nModern processor have tons of extremely useful extensions, such as AVX and SSE. Even on non-x86 platforms, extensions with similar functionality are available, such as NEON on ARM, and the proposed P and V extensions for RISC-V.\nWhile Rust allows you to directly interface with these extensions, and there are many packages for higher-level interfacing, such as packed_simd and generic-simd, the LLVM optimizer is capable of automatically optimizing code to use these extensions.\nYou may need to pass -C target-cpu=native or -C target-features=+avx through RUSTFLAGS in order to take advantage of this (see rustc --print target-features for available features for your target, and use somethng like lscpu to see what your CPU supports).\n\nDoing things in groups of 4/8 is good for vectorization.\n\nDo note, branching will heavily reduce the chances of vectorization.\n\n\n\nSee this function. It converts four f32s into four u8s.\n#[inline]\npub unsafe fn f32_to_u8(f: f32) -&gt; u8 {\n\tif f &gt; f32::from(u8::MAX) {\n\t\tu8::MAX\n\t} else {\n\t\tf32::to_int_unchecked(f)\n\t}\n}\n\n&#x2F;&#x2F;&#x2F; Converts a slice of 4 [f32] s into a tuple of 4 [u8]s, rounding it in the process\n#[must_use]\npub fn f32s4_to_u8(f: [f32; 4]) -&gt; (u8, u8, u8, u8) {\n\tlet f = &amp;f[..4];\n\tunsafe {\n\t\t(\n\t\t\tf32_to_u8(f[0]),\n\t\t\tf32_to_u8(f[1]),\n\t\t\tf32_to_u8(f[2]),\n\t\t\tf32_to_u8(f[3]),\n\t\t)\n\t}\n}\n\nNow, we can throw this code into Compiler Explorer to see what assembly it generates. Don't forget the compiler flags!\nexample::f32s4_to_u8:\n        vmovss  xmm0, dword ptr [rip + .LCPI0_0]\n        vminss  xmm1, xmm0, dword ptr [rdi]\n        vcvttss2si      eax, xmm1\n        vminss  xmm0, xmm0, dword ptr [rdi + 4]\n        vcvttss2si      ecx, xmm0\n        vmovsd  xmm0, qword ptr [rdi + 8]\n        vbroadcastss    xmm1, dword ptr [rip + .LCPI0_0]\n        vcmpleps        xmm2, xmm1, xmm0\n        vblendvps       xmm0, xmm0, xmm1, xmm2\n        vcvttps2dq      xmm0, xmm0\n        vpand   xmm0, xmm0, xmmword ptr [rip + .LCPI0_1]\n        vpsllvd xmm0, xmm0, xmmword ptr [rip + .LCPI0_2]\n        movzx   ecx, cl\n        shl     ecx, 8\n        movzx   eax, al\n        or      eax, ecx\n        vmovd   ecx, xmm0\n        or      ecx, eax\n        vpextrd eax, xmm0, 1\n        or      eax, ecx\n        ret\n\nSuccess! It generates AVX instructions, such as VBROADCASTSS and VMOVSS!\nMaking the compiler brrrr harder\nIt is entirely possible to configure the compiler to optimize more aggressively! For example, in Cargo.toml (Do note this will increase compile times!!):\n[profile.release]\nlto = &#x27;thin&#x27;\npanic = &#x27;abort&#x27;\ncodegen-units = 1\n\n[profile.bench]\nlto = &#x27;thin&#x27;\ncodegen-units = 1\n\nEach option explained:\n\nlto = 'thin' - Quite simply enables Thin LTO. You can also try lto = 'fat', performance gains should be similar.\npanic = 'abort' - Abort instead of unwinding on panic. You'll get a smaller, more performant binary, but you won't be able to catch panics anymore. See the Rust Guide for more info.\ncodegen-units = 1 - Ensures that the crate is compiled with only one code generation unit. This reduces the paralellization of the compilation, but will allow the LLVM to optimize it much better.\n\nEdits\n\n9/30/2020, 3:40 PM EST - Re-phrased the Copy/Clone section, (thanks /u/SkiFire13) mentioned sync_all in the buffering section (thanks /u/Freeky), and also mentioned lto = 'fat' (thanks /u/po8)\n\n",
+		"author": {
+			"@type": "Person",
+			"name": "Lucy"
+		}
+	}
+</script>
+</head>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://absolucy.moe" style="text-decoration: none;">
+                    <div class="logo">
+                      
+                            Lucy
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://absolucy.moe">blog</a></li>
+            
+                <li><a href="https://absolucy.moe/archive">archive</a></li>
+            
+                <li><a href="https://absolucy.moe/portfolio">portfolio</a></li>
+            
+                <li><a href="https://social.treehouse.systems/@absolucy" target="_blank" rel="noopener noreferrer">mastodon</a></li>
+            
+                <li><a href="https://github.com/Absolucy" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="mailto:lucy@absolucy.moe">email</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://absolucy.moe/rust-optimization/">Optimization - Making Rust Code Go Brrrr</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date">
+            2020-09-29
+        </span>
+
+    </div>
+
+    
+
+        <div class="post-content">
+            <p>Rust code can be fast. Very fast, in fact. If you look at the <a href="https://benchmarksgame-team.pages.debian.net/benchmarksgame/fastest/rust.html">Benchmarks Game</a>, it goes head-to-head with C and C++.</p>
+<p>But performance isn't effortless, although Rust's LLVM backend makes it seem so. I'm going to go over the ways I improve performance in my Rust projects.<span id="continue-reading"></span></p>
+<h2 id="rayon-isn-t-a-magic-bullet">Rayon isn't a magic bullet</h2>
+<p>It's really not. Many people think just slapping <code>par_iter</code> on the smallest operation will magically fix their performance. It won't. With that mindset, <em>synchronization overhead will eat you alive</em>.</p>
+<p>Rayon has more than just <code>par_iter</code>. For example, <a href="https://docs.rs/rayon/*/rayon/slice/trait.ParallelSlice.html#method.par_chunks"><code>par-chunks</code></a> is very useful - you can split your task into parallel <em>chunks</em>, each thread processing a portion of the entire dataset at a time. This greatly reduces synchronization overhead, especially for situations where you have a large amount of small tasks. However, <em><strong>it still may be better to use <em><strong><code>par_iter</code></strong></em> for large tasks that take a while per iteration</strong></em>.</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">iter.par_chunks(4096).for_each(|x| {
+	for y in x {
+		y.do_small_thing();
+	}
+});
+</code></pre>
+<h2 id="buffering-matters">Buffering matters!</h2>
+<p>This is simple. I/O involves syscalls. Syscalls are bad for performance. Therefore, you want to minimize syscalls and optimize I/O.</p>
+<p>You should always wrap I/O (whether it be a <a href="https://doc.rust-lang.org/std/fs/struct.File.html"><code>File</code></a>, <a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html"><code>TcpStream</code></a>, et cetera) in an <a href="https://doc.rust-lang.org/std/io/struct.BufReader.html"><code>BufReader</code></a> or <a href="https://doc.rust-lang.org/std/io/struct.BufWriter.html"><code>BufWriter</code></a>. These quite simply buffer I/O operations, preferring to write things in a single large batch, over many small batches. This reduces your total syscalls, and overall increases performance.</p>
+<p><strong>Remember!!:</strong> If you use a <a href="https://doc.rust-lang.org/std/io/struct.BufWriter.html"><code>BufWriter</code></a>, make sure to call <a href="https://doc.rust-lang.org/std/io/struct.BufWriter.html#method.flush"><code>flush</code></a> and/or <a href="https://doc.rust-lang.org/std/fs/struct.File.html#method.sync_all"><code>sync_all</code></a> before it's dropped! This will allow you to handle any errors.</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">let fd = File::create(&quot;example.bin&quot;).expect(&quot;Failed to create file!&quot;);
+let mut writer = BufWriter::new(fd);
+std::io::copy(&amp;mut buffer, &amp;mut writer).expect(&quot;Failed to copy buffer!&quot;);
+writer.flush().expect(&quot;Failed to write file!&quot;);
+</code></pre>
+<h2 id="std-isn-t-always-the-best">std isn't always the best.</h2>
+<p>The Rust standard library is great. I mean, it really is. But it doesn't always offer the best options. Some crates provide near-identical interfaces at greatly increased performance.</p>
+<ul>
+<li><a href="https://crates.io/crates/parking_lot"><code>parking_lot</code></a> - Offers better <a href="https://docs.rs/parking_lot/*/parking_lot/type.Mutex.html"><code>Mutex</code></a> and <a href="https://docs.rs/parking_lot/*/parking_lot/type.RwLock.html"><code>RwLock</code></a> implementations than Rust's standard library. In addition to performing better, they don't poison (so no need for an additional match/unwrap).</li>
+<li><a href="https://crates.io/crates/crossbeam-channel"><code>crossbeam-channel</code></a> and <a href="https://crates.io/crates/flume"><code>flume</code></a> - These provide alternative <code>Sender</code>/<code>Receiver</code> implementations to the ones in <a href="https://doc.rust-lang.org/std/sync/mpsc/index.html"><code>std::sync::mpsc</code></a>. I personally prefer <a href="https://crates.io/crates/flume"><code>flume</code></a>, as it's implemented in 100% safe code.</li>
+<li><a href="https://crates.io/crates/dashmap"><code>dashmap</code></a> is a better solution than throwing <code>Arc&lt;RwLock&lt;HashMap&lt;K, V&gt;&gt;&gt;</code> everywhere - as it's optimized with sharding, allows for concurrent access, highly performant, and easy to use/convert to.</li>
+<li><a href="https://crates.io/crates/ryu"><code>ryu</code></a> and <a href="https://crates.io/crates/lexical"><code>lexical</code></a> - These are highly performant interfaces for converting to and from decimal strings. Quite simply, they turn <code>&quot;1.2345&quot;</code> to <code>1.2345_f32</code> and do so fast, and vice versa.
+<ul>
+<li>Just prefer to avoid text processing when possible, truth be told.</li>
+</ul>
+</li>
+</ul>
+<h2 id="allocating-the-path-to-hell">Allocating the path to hell</h2>
+<p>Many Rust developers take types such as <code>String</code> and <code>Vec</code> for granted, without understanding the downsides. These are <em>dynamically allocated</em> types. Allocations are not your friend when you're optimizing for performance.</p>
+<ul>
+<li>In types that will be serialized/deserialized from another format, prefer <a href="https://doc.rust-lang.org/std/borrow/enum.Cow.html"><code>Cow&lt;str&gt;</code></a>. This will allow you to borrow the string, and then convert it to an owned string if needed.</li>
+<li>Look into crates such as <a href="https://crates.io/crates/tinyvec"><code>tinyvec</code></a> and <a href="https://crates.io/crates/smol_str"><code>smolstr</code></a>. These allow for you to have stack-optimized structures, with minimal effort.</li>
+<li>Types that require an explicit <a href="https://doc.rust-lang.org/std/clone/trait.Clone.html"><code>clone</code></a> typically allocate! Prefer <a href="https://doc.rust-lang.org/std/marker/trait.Copy.html"><code>Copy</code></a> types where possible.</li>
+</ul>
+<p>In addition, look into alternative allocators which may yield better performance for your project, such as <a href="https://crates.io/crates/jemallocator">jemallocator</a> or <a href="https://crates.io/crates/mimalloc">mimalloc</a>.</p>
+<h2 id="advanced-magic-extensions">Advanced Magic Extensions</h2>
+<p>Modern processor have tons of extremely useful extensions, such as <a href="https://en.wikipedia.org/wiki/Advanced_Vector_Extensions">AVX</a> and <a href="https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions">SSE</a>. Even on non-x86 platforms, extensions with similar functionality are available, such as <a href="https://en.wikipedia.org/wiki/ARM_architecture#Advanced_SIMD_(NEON)">NEON</a> on ARM, and the <a href="https://en.wikipedia.org/wiki/RISC-V#Packed_SIMD">proposed P and V extensions for RISC-V</a>.</p>
+<p>While Rust allows you to directly interface with these extensions, and there are many packages for higher-level interfacing, such as <a href="https://crates.io/crates/packed_simd">packed_simd</a> and <a href="https://crates.io/crates/generic-simd">generic-simd</a>, the LLVM optimizer is capable of automatically optimizing code to use these extensions.</p>
+<p>You may need to pass <code>-C target-cpu=native</code> or <code>-C target-features=+avx</code> through <code>RUSTFLAGS</code> in order to take advantage of this (see <code>rustc --print target-features</code> for available features for your target, and use somethng like <code>lscpu</code> to see what your CPU supports).</p>
+<ul>
+<li>Doing things in groups of 4/8 is good for vectorization.
+<ul>
+<li>Do note, <strong>branching will heavily reduce the chances of vectorization.</strong></li>
+</ul>
+</li>
+</ul>
+<p>See this function. It converts four <code>f32</code>s into four <code>u8</code>s.</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">#[inline]
+pub unsafe fn f32_to_u8(f: f32) -&gt; u8 {
+	if f &gt; f32::from(u8::MAX) {
+		u8::MAX
+	} else {
+		f32::to_int_unchecked(f)
+	}
+}
+
+&#x2F;&#x2F;&#x2F; Converts a slice of 4 [f32] s into a tuple of 4 [u8]s, rounding it in the process
+#[must_use]
+pub fn f32s4_to_u8(f: [f32; 4]) -&gt; (u8, u8, u8, u8) {
+	let f = &amp;f[..4];
+	unsafe {
+		(
+			f32_to_u8(f[0]),
+			f32_to_u8(f[1]),
+			f32_to_u8(f[2]),
+			f32_to_u8(f[3]),
+		)
+	}
+}
+</code></pre>
+<p>Now, we can throw this code into <a href="https://godbolt.org/">Compiler Explorer</a> to see what assembly it generates. Don't forget the compiler flags!</p>
+<pre data-lang="asm" class="language-asm "><code class="language-asm" data-lang="asm">example::f32s4_to_u8:
+        vmovss  xmm0, dword ptr [rip + .LCPI0_0]
+        vminss  xmm1, xmm0, dword ptr [rdi]
+        vcvttss2si      eax, xmm1
+        vminss  xmm0, xmm0, dword ptr [rdi + 4]
+        vcvttss2si      ecx, xmm0
+        vmovsd  xmm0, qword ptr [rdi + 8]
+        vbroadcastss    xmm1, dword ptr [rip + .LCPI0_0]
+        vcmpleps        xmm2, xmm1, xmm0
+        vblendvps       xmm0, xmm0, xmm1, xmm2
+        vcvttps2dq      xmm0, xmm0
+        vpand   xmm0, xmm0, xmmword ptr [rip + .LCPI0_1]
+        vpsllvd xmm0, xmm0, xmmword ptr [rip + .LCPI0_2]
+        movzx   ecx, cl
+        shl     ecx, 8
+        movzx   eax, al
+        or      eax, ecx
+        vmovd   ecx, xmm0
+        or      ecx, eax
+        vpextrd eax, xmm0, 1
+        or      eax, ecx
+        ret
+</code></pre>
+<p>Success! It generates AVX instructions, such as <a href="https://www.felixcloutier.com/x86/vbroadcast"><code>VBROADCASTSS</code></a> and <a href="https://www.felixcloutier.com/x86/movss"><code>VMOVSS</code></a>!</p>
+<h2 id="making-the-compiler-brrrr-harder">Making the compiler brrrr harder</h2>
+<p>It is entirely possible to configure the compiler to optimize more aggressively! For example, in <code>Cargo.toml</code> (<strong>Do note this will increase compile times!!</strong>):</p>
+<pre data-lang="toml" class="language-toml "><code class="language-toml" data-lang="toml">[profile.release]
+lto = &#x27;thin&#x27;
+panic = &#x27;abort&#x27;
+codegen-units = 1
+
+[profile.bench]
+lto = &#x27;thin&#x27;
+codegen-units = 1
+</code></pre>
+<p>Each option explained:</p>
+<ul>
+<li><code>lto = 'thin'</code> - Quite simply enables <a href="https://clang.llvm.org/docs/ThinLTO.html">Thin LTO</a>. You can also try <code>lto = 'fat'</code>, performance gains should be similar.</li>
+<li><code>panic = 'abort'</code> - Abort instead of unwinding on panic. You'll get a smaller, more performant binary, but you won't be able to catch panics anymore. See <a href="https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/aborting-on-panic.html">the Rust Guide for more info</a>.</li>
+<li><code>codegen-units = 1</code> - Ensures that the crate is compiled with only one <a href="https://doc.rust-lang.org/rustc/codegen-options/index.html#codegen-units">code generation unit</a>. This reduces the paralellization of the compilation, but will allow the LLVM to optimize it much better.</li>
+</ul>
+<h2 id="edits">Edits</h2>
+<ul>
+<li><strong>9/30/2020, 3:40 PM EST</strong> - Re-phrased the Copy/Clone section, (thanks /u/SkiFire13) mentioned <code>sync_all</code> in the buffering section (thanks /u/Freeky), and also mentioned <code>lto = 'fat'</code> (thanks /u/po8)</li>
+</ul>
+
+        </div>
+
+        
+        <div class="pagination">
+            <div class="pagination__title">
+                <span class="pagination__title-h">Thanks for reading! Read other posts?</span>
+                <hr />
+            </div>
+            <div class="pagination__buttons">
+                
+                    <span class="button next">
+                        <a href="https://absolucy.moe/dont-use-brave/">
+                            <span class="button__text">No, you shouldn&#x27;t use Brave.</span>&nbsp;
+                            <span class="button__icon">→</span>
+                        </a>
+                    </span>
+                </div>
+        </div>
+    
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2024
+ Lucy</span>
+                    <span class="copyright-theme">
+                        <span class="copyright-theme-sep">:: </span>
+                        Theme: <a href="https://github.com/pawroman/zola-theme-terminimal/">Terminimal</a> by pawroman
+                    </span>
+                </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

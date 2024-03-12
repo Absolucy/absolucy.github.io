@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /archive/
+Disallow: /page/
+Disallow: /pages/
+Disallow: *?
+
+Sitemap: https://absolucy.moe/sitemap.xml

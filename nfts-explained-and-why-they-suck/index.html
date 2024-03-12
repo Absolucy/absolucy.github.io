@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>What&#x27;s a NFT, how does it work, and why do they suck?</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://absolucy.moe/style.css">
+    <link rel="stylesheet" href="https://absolucy.moe/color/pink.css">
+
+        <link rel="stylesheet" href="https://absolucy.moe/color/background_dark.css">
+    
+    <link rel="stylesheet" href="https://absolucy.moe/font-hack-subset.css">
+
+    <meta name="description" content="">
+
+    <meta property="og:description" content="">
+    <meta property="og:title" content="What's a NFT, how does it work, and why do they suck?">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://absolucy.moe/nfts-explained-and-why-they-suck/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:title" content="What's a NFT, how does it work, and why do they suck?">
+    <meta property="twitter:domain" content="absolucy.moe">
+    <meta property="twitter:url" content="https://absolucy.moe/nfts-explained-and-why-they-suck/">
+
+<meta
+	property="og:title"
+	content="What&#x27;s a NFT, how does it work, and why do they suck?"
+/>
+<meta property="og:description" content="<p>Recently, some new technology has been very controversial - NFTs, short for &quot;non-fungible tokens&quot;, often associated with mass-generated pixel art. There's plenty of reasons to dislike them, but it's dumb to dislike something if you don't know <em>why</em>. Hop on Ms Lucy's Wild Ride, because we're going dumpster diving into the technical details of NFTs (and why they suck!)" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site:id" content="1265822802554368000" />
+<meta name="twitter:creator:id" content="1265822802554368000" />
+<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "BlogPosting",
+		"headline": "What's a NFT, how does it work, and why do they suck?",
+		"wordcount": "1636",
+		"url": "https://absolucy.moe/nfts-explained-and-why-they-suck/",
+		
+			"dateCreated": "2022-01-22",
+			"datePublished": "2022-01-22",
+		
+			"description": "Recently, some new technology has been very controversial - NFTs, short for &quot;non-fungible tokens&quot;, often associated with mass-generated pixel art. There's plenty of reasons to dislike them, but it's dumb to dislike something if you don't know why. Hop on Ms Lucy's Wild Ride, because we're going dumpster diving into the technical details of NFTs (and why they suck!)",
+		"articleBody": "Recently, some new technology has been very controversial - NFTs, short for &quot;non-fungible tokens&quot;, often associated with mass-generated pixel art. There's plenty of reasons to dislike them, but it's dumb to dislike something if you don't know why. Hop on Ms Lucy's Wild Ride, because we're going dumpster diving into the technical details of NFTs (and why they suck!)\nNote: This article assumes you have a basic understanding of computer concepts such as how a URL works, what cryptography is, etc.\nUpdate 1/23/21: Clarified that the contents of an NFT are not unique, and that NFTs are based on the Ethereum blockchain.\nNFT? Isn't that a filesystem?\nNFTs, not to be confused with NTFS (which is Microsoft's filesystem used on  Windows), are a technology closely tied to blockchains and cryptocurrency. Of course, to understand NFTs, we first need to understand blockchains and cryptocurrency.\nChaining Blocks (around your bandwidth)\nThe simplest way to describe a blockchain is that it's a distributed append-only database. What this means is that a blockchain is a container containing some form of data, distributed across multiple computers, and that any entries can never be removed, only appended to the end.\nEach &quot;block&quot; in the blockchain contains some data. Each block also contains a cryptographic hash of the previous block in the chain. Due to that, you cannot edit blocks, as that would invalidate the hash of the next block, and users of the blockchain would reject your version of the blockchain. It's basically an automatic &quot;majority rules&quot; system with computers.\nSide note: you CAN sorta rewrite it if you have control of at least 51% of peers in a blockchain, but that's not relevant for this article. Cryptocurrencies such as Bitcoin Gold and Ethereum Classic have been 51% attacked before, if you're curious.\nThis sounds nice in theory... but there are very few practical uses for this technology. It adds a ton of complexity, and the cost of syncing the blockchain to every single peer is very bandwidth heavy.\nChuck E. Cheese's Cocaine Tokens\nCryptocurrency is a technology based on blockchains, where transactions are encoded in the blockchain, and this &quot;money&quot; is gotten in the first place through a process known as &quot;proof of work&quot; or &quot;mining&quot;.\n\n\nWorth Noting\n\nIf you were on the internet in the early 2010s, you may have known Bitcoin as what people used to buy drugs on the dark web! This is not inaccurate, although I'm pretty sure any drug dealer with a brain is using Monero now, due to its privacy-focused design.\n\n&quot;Proof of work&quot; is a system where in order to pass some sort of arbitrary challenge, a computer has to do some computationally expensive task, which can then be effortlessly verified. This system is used to &quot;mine&quot; most cryptocurrencies - the peers on the blockchain will only agree that you &quot;mined&quot; a token is if they can verify you passed whatever the latest challenge was.\nWith proof of work, comes a major problem - remember when I said that it's a computationally expensive task? Yeah, well... as time goes on, the difficulty of the challenge gets higher and higher, and you need to use more processing power in order to mine more tokens. High-speed computers are not exactly the most energy-efficient things in the world. And energy costs money. This leads to &quot;hardcore&quot; miners going to wherever energy is cheapest, and setting up a massive energy-sucking mining farm there. Of course, the cheapest energy doesn't tend to be in places with advanced technology powered solely by solar farms, wind mills, hydroelectric dams, or nuclear plants. No. They usually gravitate towards areas whose power grids are based off of coal or natural gas. And as the energy demand goes higher due to miners flocking to this &quot;cheap energy&quot;, more coal/gas gets combusted, sending more and more greenhouse gases into the atmosphere. That is not good for the planet. It's not exactly the end of the world, no matter what some doomers might have you think, but it is still NOT a good thing in the slightest, and something you should very much be against.\nAs of the time of writing (1/22/22) - a single Bitcoin transaction costs nearly 2200 kWh of electricity (the power consumption of an average U.S. household over nearly 75 days) and dumps over 1,000 kilograms of CO2 into the atmosphere (about the same as 2.3 million VISA transactions)[1].\nYikes.\nBuying A Digital Star\nNow that we got all that out of the way, we can talk about what you came here to learn about - NFTs!\nOn a very basic level, an NFT is a unique token on a blockchain, usually the Ethereum network. Using public key cryptography, you can prove that you own the NFT. In theory, it sounds like a good solution to proving ownership.\n\n\nWorth Noting\n\nBitcoin is *unrelated* to NFTs, they were simply explained earlier as the easiest way to explain cryptocurrency. Most NFTs are based on the Ethereum blockchain, which is used by the cryptocurrency of the same name.\n\nSmall problem: anyone (who has enough digital chuck e. cheese tokens) can create a NFT. The NFT can be pointed at anything you want, with any sort of metadata you want. Therefore, the whole idea of &quot;digital ownership&quot; with NFTs is about as valid as selling your school on craigslist.\nAlso, NFTs do not encode the actual thingymajig in the blockchain. Let's look at the Ethereum NFT standard, which defines exactly what an NFT looks like. It's just a JSON object, for example:\n{\n    &quot;name&quot;: &quot;Yo Mama&quot;,\n    &quot;description&quot;: &quot;Yo mama so fat, she broke the blockchain in half!&quot;,\n    &quot;image&quot;: &quot;https:&#x2F;&#x2F;tinyurl.com&#x2F;my-epic-nft&quot;,\n    &quot;weight&quot;: NaN\n}\n\nI can create an NFT to some artwork that I have no rights to whatsoever. They can't un-block the blockchain! You know what can happen though? The rightful owner can DMCA whatever image host that the NFT is pointing to, and they can DMCA the &quot;marketplace&quot; that's displaying your NFT. Of course, sadly, most artists won't do that, as the DMCA kinda sucks and allows providers to dox you to whoever posted the content you're DMCAing (unless you can get a lawyer to write the takedown instead, but most people don't have the money for that)\nWhat About The Ugly Monkeys?\nAh yes, the stupid monkey pixel art. I'm not even going to bother to figure out the actual proper name for them. But they're the prime example most people think of when you say &quot;NFT&quot;.\nWhere did all the shitty pixel art come from? Simple. Someone makes a &quot;base&quot; (such as a naked monkey) and a bunch of acccessories (such as hats, shirts, glasses, blah blah blah). They then use a script to generate a picture of every single combination of these accessories, and mass generate NFTs of it all. Very low effort, hence why it all looks awful.\nThese NFTs get bought up by suckers who think it makes them a part of some &quot;cool kids club&quot;, who then brag about the NFT to everyone willing to listen (and a few who aren't so willing). It's digital beanie babies.\nNFArt Theft\nOne of the worst uses of NFTs is minting NFTs of other people's art. This is sadly, very common. In fact, it's so bad that DeviantArt literally had to make an automated scanner that alerts people if someone tried to mint their art as a NFT!\nMost of these art thieves are using bots to mass upload any art they find online in order to try to make a quick buck from some crypto-bro with too much money on their hands, who is misguided into thinking they'll &quot;own&quot; this artwork. NBC News has an article on the rise in art theft.\nIf you want to &quot;own&quot; artwork, just like, commission an artist. No need for crypto bullshit anywhere in the process. I've commissioned tons of art, and it's a win-win - an artist directly gets real money, and I get art made to my specifications.\nThe Ultimate Goal of NFTs\nThe ultimate goal of NFTs is kind of awful when you look at it - people want to reintroduce scarcity to the internet, a landscape where scarcity doesn't really exist.\nNot everything needs to be purchasable, not everything needs to be sold. Information and such should be freely available, it's greedy and unethical to want to carve the internet up into a bunch of marketable pieces for profit.\nThat's what NFTs basically are, greed. Any other uses for them were thought of after the fact, to try to retroactively justify them.\nSee this thread by @eevee for a better explaination, I don't want to just re-write what they said.\nConclusion\nIn short, NFTs are a horribly inefficient way of trying to say you &quot;own&quot; something - however they have no legal value and are not nearly as robust as the believers would have you think they are, in addition to the fact many use them solely to try to make money off low-effort content or even other people's content entirely.\nI wrote this all late at night in one go (powered by ADHD hyperfocusing), so like, if I messed up any details, let me know and I'll try to fix it.\nCitations\n[1] “Bitcoin Energy Consumption Index.” Digiconomist, 17 Jan. 2022, https://digiconomist.net/bitcoin-energy-consumption. \n",
+		"author": {
+			"@type": "Person",
+			"name": "Lucy"
+		}
+	}
+</script>
+</head>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://absolucy.moe" style="text-decoration: none;">
+                    <div class="logo">
+                      
+                            Lucy
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://absolucy.moe">blog</a></li>
+            
+                <li><a href="https://absolucy.moe/archive">archive</a></li>
+            
+                <li><a href="https://absolucy.moe/portfolio">portfolio</a></li>
+            
+                <li><a href="https://social.treehouse.systems/@absolucy" target="_blank" rel="noopener noreferrer">mastodon</a></li>
+            
+                <li><a href="https://github.com/Absolucy" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="mailto:lucy@absolucy.moe">email</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://absolucy.moe/nfts-explained-and-why-they-suck/">What&#x27;s a NFT, how does it work, and why do they suck?</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date">
+            2022-01-22
+        </span>
+
+    </div>
+
+    
+
+        <div class="post-content">
+            <p>Recently, some new technology has been very controversial - NFTs, short for &quot;non-fungible tokens&quot;, often associated with mass-generated pixel art. There's plenty of reasons to dislike them, but it's dumb to dislike something if you don't know <em>why</em>. Hop on Ms Lucy's Wild Ride, because we're going dumpster diving into the technical details of NFTs (and why they suck!)<span id="continue-reading"></span></p>
+<p><strong>Note</strong>: This article assumes you have a basic understanding of computer concepts such as how a URL works, what cryptography is, etc.</p>
+<p><strong>Update 1/23/21</strong>: Clarified that the contents of an NFT are not unique, and that NFTs are based on the Ethereum blockchain.</p>
+<h2 id="nft-isn-t-that-a-filesystem">NFT? Isn't that a filesystem?</h2>
+<p>NFTs, not to be confused with NTFS (which is Microsoft's filesystem used on  Windows), are a technology closely tied to blockchains and cryptocurrency. Of course, to understand NFTs, we first need to understand blockchains and cryptocurrency.</p>
+<h2 id="chaining-blocks-around-your-bandwidth">Chaining Blocks (around your bandwidth)</h2>
+<p>The simplest way to describe a blockchain is that it's a distributed append-only database. What this means is that a blockchain is a container containing some form of data, distributed across multiple computers, and that any entries can never be removed, only appended to the end.</p>
+<p>Each &quot;block&quot; in the blockchain contains some data. Each block also contains a cryptographic hash of the previous block in the chain. Due to that, you cannot edit blocks, as that would invalidate the hash of the next block, and users of the blockchain would reject your version of the blockchain. It's basically an automatic &quot;majority rules&quot; system with computers.</p>
+<p>Side note: you CAN sorta rewrite it if you have control of at least 51% of peers in a blockchain, but that's not relevant for this article. Cryptocurrencies such as Bitcoin Gold and Ethereum Classic have been 51% attacked before, if you're curious.</p>
+<p>This sounds nice in theory... but there are very few practical uses for this technology. It adds a ton of complexity, and the cost of syncing the blockchain to every single peer is <em>very</em> bandwidth heavy.</p>
+<h2 id="chuck-e-cheese-s-cocaine-tokens">Chuck E. Cheese's Cocaine Tokens</h2>
+<p>Cryptocurrency is a technology based on blockchains, where transactions are encoded in the blockchain, and this &quot;money&quot; is gotten in the first place through a process known as &quot;proof of work&quot; or &quot;mining&quot;.</p>
+<div class="note">
+<div class="note-header">
+Worth Noting
+</div>
+If you were on the internet in the early 2010s, you may have known Bitcoin as what people used to buy drugs on the dark web! This is not inaccurate, although I'm pretty sure any drug dealer with a brain is using Monero now, due to its privacy-focused design.
+</div>
+<p>&quot;Proof of work&quot; is a system where in order to pass some sort of arbitrary challenge, a computer has to do some computationally expensive task, which can then be effortlessly verified. This system is used to &quot;mine&quot; most cryptocurrencies - the peers on the blockchain will only agree that you &quot;mined&quot; a token is if they can verify you passed whatever the latest challenge was.</p>
+<p>With proof of work, comes a major problem - remember when I said that it's a <em>computationally expensive task</em>? Yeah, well... as time goes on, the difficulty of the challenge gets higher and higher, and you need to use more processing power in order to mine more tokens. High-speed computers are not exactly the most energy-efficient things in the world. And energy costs money. This leads to &quot;hardcore&quot; miners going to wherever energy is cheapest, and setting up a massive energy-sucking mining farm there. Of course, the cheapest energy doesn't tend to be in places with advanced technology powered solely by solar farms, wind mills, hydroelectric dams, or nuclear plants. No. They usually gravitate towards areas whose power grids are based off of coal or natural gas. And as the energy demand goes higher due to miners flocking to this &quot;cheap energy&quot;, more coal/gas gets combusted, sending more and more greenhouse gases into the atmosphere. That is not good for the planet. It's not exactly the end of the world, no matter what some doomers might have you think, but it is still NOT a good thing in the slightest, and something you should very much be against.</p>
+<p>As of the time of writing (1/22/22) - a single Bitcoin transaction costs nearly 2200 kWh of electricity (the power consumption of an average U.S. household over nearly 75 days) and dumps over 1,000 kilograms of CO<sub>2</sub> into the atmosphere (about the same as 2.3 million VISA transactions)<a href="https://absolucy.moe/nfts-explained-and-why-they-suck/#1"><sup>[1]</sup></a>.</p>
+<p>Yikes.</p>
+<h2 id="buying-a-digital-star">Buying A Digital Star</h2>
+<p>Now that we got all that out of the way, we can talk about what you came here to learn about - NFTs!</p>
+<p>On a very basic level, an NFT is a <strong>unique</strong> token on a blockchain, usually the Ethereum network. Using public key cryptography, you can prove that <em>you</em> own the NFT. In theory, it sounds like a good solution to proving ownership.</p>
+<div class="note">
+<div class="note-header">
+Worth Noting
+</div>
+Bitcoin is *unrelated* to NFTs, they were simply explained earlier as the easiest way to explain cryptocurrency. Most NFTs are based on the Ethereum blockchain, which is used by the cryptocurrency of the same name.
+</div>
+<p>Small problem: anyone (who has enough digital chuck e. cheese tokens) can create a NFT. The NFT can be pointed at anything you want, with any sort of metadata you want. Therefore, the whole idea of &quot;digital ownership&quot; with NFTs is about as valid as <a href="https://newyork.cbslocal.com/2018/05/24/student-school-prank-craigslist/">selling your school on craigslist</a>.</p>
+<p>Also, NFTs do <em>not</em> encode the actual thingymajig in the blockchain. Let's look at the <a href="https://eips.ethereum.org/EIPS/eip-721">Ethereum NFT standard</a>, which defines exactly what an NFT looks like. It's just a JSON object, for example:</p>
+<pre data-lang="json" class="language-json "><code class="language-json" data-lang="json">{
+    &quot;name&quot;: &quot;Yo Mama&quot;,
+    &quot;description&quot;: &quot;Yo mama so fat, she broke the blockchain in half!&quot;,
+    &quot;image&quot;: &quot;https:&#x2F;&#x2F;tinyurl.com&#x2F;my-epic-nft&quot;,
+    &quot;weight&quot;: NaN
+}
+</code></pre>
+<p>I can create an NFT to some artwork that I have <em>no rights to whatsoever</em>. They can't un-block the blockchain! You know what can happen though? The rightful owner can DMCA whatever image host that the NFT is pointing to, and they can DMCA the &quot;marketplace&quot; that's displaying your NFT. Of course, sadly, most artists won't do that, as the DMCA kinda sucks and allows providers to <em>dox</em> you to whoever posted the content you're DMCAing (unless you can get a lawyer to write the takedown instead, but most people don't have the money for that)</p>
+<h2 id="what-about-the-ugly-monkeys">What About The Ugly Monkeys?</h2>
+<p>Ah yes, the stupid monkey pixel art. I'm not even going to bother to figure out the actual proper name for them. But they're the prime example most people think of when you say &quot;NFT&quot;.</p>
+<p>Where did all the shitty pixel art come from? Simple. Someone makes a &quot;base&quot; (such as a naked monkey) and a bunch of acccessories (such as hats, shirts, glasses, blah blah blah). They then use a script to generate a picture of every single combination of these accessories, and mass generate NFTs of it all. Very low effort, hence why it all looks awful.</p>
+<p>These NFTs get bought up by suckers who think it makes them a part of some &quot;cool kids club&quot;, who then brag about the NFT to everyone willing to listen (and a few who aren't so willing). It's digital beanie babies.</p>
+<h2 id="nfart-theft">NFArt Theft</h2>
+<p>One of the worst uses of NFTs is minting NFTs of other people's art. This is sadly, very common. In fact, it's so bad that <a href="https://www.deviantart.com/team/journal/DeviantArt-Protect-Helping-Safeguard-Your-Art-884278903">DeviantArt literally had to make an automated scanner that alerts people if someone tried to mint their art as a NFT</a>!</p>
+<p>Most of these art thieves are using bots to mass upload any art they find online in order to try to make a quick buck from some crypto-bro with too much money on their hands, who is misguided into thinking they'll &quot;own&quot; this artwork. <a href="https://www.nbcnews.com/tech/security/nft-art-sales-are-booming-just-artists-permission-rcna10798">NBC News has an article on the rise in art theft</a>.</p>
+<p>If you want to &quot;own&quot; artwork, just like, commission an artist. No need for crypto bullshit anywhere in the process. I've commissioned tons of art, and it's a win-win - an artist directly gets <em>real</em> money, and I get art made to my specifications.</p>
+<h2 id="the-ultimate-goal-of-nfts">The Ultimate Goal of NFTs</h2>
+<p>The ultimate goal of NFTs is kind of awful when you look at it - people want to reintroduce scarcity to the internet, a landscape where scarcity <em>doesn't really exist</em>.</p>
+<p>Not everything needs to be purchasable, not everything needs to be sold. Information and such should be <em>freely available</em>, it's greedy and unethical to want to carve the internet up into a bunch of marketable pieces for profit.</p>
+<p>That's what NFTs basically are, greed. Any other uses for them were thought of after the fact, to try to retroactively justify them.</p>
+<p><a href="https://twitter.com/eevee/status/1484748148169793537">See this thread by @eevee for a better explaination, I don't want to just re-write what they said.</a></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In short, NFTs are a horribly inefficient way of trying to say you &quot;own&quot; something - however they have no legal value and are not nearly as robust as the believers would have you think they are, in addition to the fact many use them solely to try to make money off low-effort content or even other people's content entirely.</p>
+<p>I wrote this all late at night in one go (powered by ADHD hyperfocusing), so like, if I messed up any details, let me know and I'll try to fix it.</p>
+<h2 id="citations">Citations</h2>
+<p><a id="1">[1]</a> “Bitcoin Energy Consumption Index.” Digiconomist, 17 Jan. 2022, https://digiconomist.net/bitcoin-energy-consumption. </p>
+
+        </div>
+
+        
+        <div class="pagination">
+            <div class="pagination__title">
+                <span class="pagination__title-h">Thanks for reading! Read other posts?</span>
+                <hr />
+            </div>
+            <div class="pagination__buttons">
+                    <span class="button previous">
+                        <a href="https://absolucy.moe/dont-use-brave/">
+                            <span class="button__icon">←</span>&nbsp;
+                            <span class="button__text">No, you shouldn&#x27;t use Brave.</span>
+                        </a>
+                    </span>
+                
+                </div>
+        </div>
+    
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2024
+ Lucy</span>
+                    <span class="copyright-theme">
+                        <span class="copyright-theme-sep">:: </span>
+                        Theme: <a href="https://github.com/pawroman/zola-theme-terminimal/">Terminimal</a> by pawroman
+                    </span>
+                </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>
